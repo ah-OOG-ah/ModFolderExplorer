@@ -1,37 +1,28 @@
 plugins {
-    id 'java'
+    java
+    id("com.gradleup.shadow") version "9.3.0"
 }
 
-group 'modexplorer'
-version '1.0-SNAPSHOT'
+group = "modexplorer"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
-}
-
-jar {
+tasks.withType<Jar> {
     manifest {
         attributes(
-                'Main-Class': 'modexplorer.Main'
+                "Main-Class" to "modexplorer.Main"
         )
     }
 }
 
 dependencies {
-    def asmVersion = '9.7'
+    val asmVersion = "9.9.1"
     implementation("org.ow2.asm:asm:${asmVersion}")
     implementation("org.ow2.asm:asm-commons:${asmVersion}")
     implementation("org.ow2.asm:asm-tree:${asmVersion}")
     implementation("org.ow2.asm:asm-analysis:${asmVersion}")
     implementation("org.ow2.asm:asm-util:${asmVersion}")
 }
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16

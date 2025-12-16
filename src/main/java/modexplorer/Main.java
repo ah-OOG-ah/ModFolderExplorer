@@ -1,6 +1,9 @@
 package modexplorer;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import modexplorer.classexplorers.ClassExplorer;
+import modexplorer.utils.ClassConstantPoolParser;
 import org.objectweb.asm.ClassReader;
 
 import java.io.File;
@@ -31,7 +34,7 @@ public class Main {
      * - args[0] = "C:/MultiMC/instances/GTNH/.minecraft/mods"
      * - args[1] = "D:/MinecraftStuff/MinecraftSource"
      */
-    public static void main(String[] args) {
+    static void main(String[] args) {
         if (args == null || args.length == 0) {
             throw new RuntimeException("Mod folder path is invalid");
         }
@@ -144,6 +147,21 @@ public class Main {
         final ClassReader classReader = new ClassReader(classBytes);
         for (ClassExplorer explorer : classExplorers) {
             explorer.visitClass(classReader, jarFileName);
+        }
+
+        final var gasBytes = "gasstation".getBytes(StandardCharsets.UTF_8);
+        for (int i = 0; i < classBytes.length; ++i) {
+            var skip = false;
+            if (classBytes[i] != gasBytes[0]) continue;
+            if (classBytes.length - i < gasBytes.length) break;
+
+            for (int ii = 0; ii < gasBytes.length; ++ii) {
+                if (classBytes[i + ii] != gasBytes[ii]) {
+                    skip = true; break;
+                }
+            }
+            if (skip) continue;
+            log(classFileName);
         }
 
         //classReader.accept(new ModClassVisitor(jarFileName), ClassReader.SKIP_DEBUG);
